@@ -20,7 +20,7 @@ export class CourseDataSource extends DataSource<any> {
     super();
 
     this.nameSubject = new Subject();
-    this.nameSubject = new Subject();
+    this.semesterSubject = new Subject();
     
     this.courseResults = db.list('/evals/' + this.semesterSubject, {
       query: {
