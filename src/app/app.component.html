@@ -1,6 +1,6 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <md-toolbar color="primary">
-  <span>{{appName}}</span>
+  <span>GradeViz</span>
 </md-toolbar>
 
 <div class="subtitle">
@@ -9,11 +9,27 @@
 <h2>Try it out: </h2>
 <form>
   <md-form-field>
-    <input mdInput placeholder="Department" aria-label="Department" [mdAutocomplete]="auto" [formControl]="departmentCtrl">
-    <md-autocomplete #auto="mdAutocomplete">
+    <input mdInput placeholder="Department" aria-label="Department" [mdAutocomplete]="departmentAuto" [formControl]="departmentCtrl">
+    <md-autocomplete #departmentAuto="mdAutocomplete">
       <md-option *ngFor="let department of filteredDepartments | async" [value]="department.name">
         <span>{{ department.name }}</span> |
         <span>{{ department.number }}</span>
+      </md-option>
+    </md-autocomplete>
+  </md-form-field>
+  <section>
+    <md-checkbox [(ngModel)]="isWritingIntensive" name="isWritingIntensive">Writing Intesnive</md-checkbox>
+  </section>
+  <md-select placeholder="Course Designation" [(ngModel)]="courseDesignation" name="courseDesignation">
+    <md-option *ngFor="let designation of courseDesignations" [value]="designation">
+      {{designation}}
+    </md-option>
+  </md-select>
+  <md-form-field>
+    <input mdInput placeholder="Course Name" aria-label="Course Name" [mdAutocomplete]="courseNameAuto" [formControl]="courseCtrl">
+    <md-autocomplete #courseNameAuto="mdAutocomplete">
+      <md-option *ngFor="let course of filteredCourses | async" [value]="course.name">
+        <span>{{ course.name }}</span>
       </md-option>
     </md-autocomplete>
   </md-form-field>

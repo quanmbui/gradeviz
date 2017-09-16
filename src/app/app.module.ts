@@ -6,6 +6,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MdToolbarModule } from '@angular/material';
 import { MdAutocompleteModule } from '@angular/material';
 import { MdInputModule } from '@angular/material';
+import { MdCheckboxModule } from '@angular/material';
+import { MdSelectModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 
@@ -19,6 +21,8 @@ import { AppComponent } from './app.component';
     MdToolbarModule,
     MdAutocompleteModule,
     MdInputModule,
+    MdCheckboxModule,
+    MdSelectModule,
     FormsModule,
     ReactiveFormsModule
   ],
