@@ -8,6 +8,7 @@ import 'rxjs/add/operator/map';
 import { Course } from '../util/courseModel';
 import { SemesterEnum } from '../util/semesterEnum';
 import { CourseDataSource } from '../services/courses';
+import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
 
 @Component({
 	selector: 'app-root',
@@ -24,10 +25,10 @@ export class AppComponent {
 	isWritingIntensive: boolean = false;
 
 	courseDesignation: string;
-	courseDesignations: any[] = ['H', 'N'];
+	courseDesignations: string[] = ['H', 'N'];
 
-	displayedColumns = ['id', 'name', 'instructorName', 'quality', 'medianGrade', 'writingIntensive', 'designation'];
-  	dataSource = new CourseDataSource();
+	displayedColumns: string[] = ['id', 'name', 'instructorName', 'quality', 'medianGrade'];
+  	courseDataSource: CourseDataSource;
 
 	departments: any[] = [{
 		name: 'Arkansas',
@@ -57,7 +58,9 @@ export class AppComponent {
 		number: '27.47M'
 	}];
 
-	constructor() {
+	constructor(db: AngularFireDatabase) {
+		this.courseDataSource = new CourseDataSource(db);
+
 		this.departmentCtrl = new FormControl();
 		this.courseNameCtrl = new FormControl();
 
@@ -91,7 +94,7 @@ export class AppComponent {
 		console.log("Course Designation: " + courseDesignation)
 		console.log("Course Name: " + courseName)
 
-		this.dataSource.search(department, courseName, isWritingIntensive, courseDesignation)
+		this.courseDataSource.search(department, courseName, isWritingIntensive, courseDesignation, SemesterEnum[SemesterEnum[5]])
 
 		return null
 	}
