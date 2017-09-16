@@ -1,15 +1,13 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { DataSource } from '@angular/cdk/collections';
 
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
 
-import { Course } from '../util/courseModel'
-import { SemesterEnum } from '../util/semesterEnum'
-
+import { Course } from '../util/courseModel';
+import { SemesterEnum } from '../util/semesterEnum';
+import { CourseDataSource } from '../services/courses';
 
 @Component({
 	selector: 'app-root',
@@ -29,7 +27,7 @@ export class AppComponent {
 	courseDesignations: any[] = ['H', 'N'];
 
 	displayedColumns = ['id', 'name', 'instructorName', 'quality', 'medianGrade', 'writingIntensive', 'designation'];
-  	dataSource = new MyDataSource();
+  	dataSource = new CourseDataSource();
 
 	departments: any[] = [{
 		name: 'Arkansas',
@@ -83,33 +81,18 @@ export class AppComponent {
 	}
 
 	search() {
-		console.log("Department: " + this.departmentCtrl.value)
-		console.log("Writing Intensive: " + this.isWritingIntensive)
-		console.log("Course Designation: " + this.courseDesignation)
-		console.log("Course Name: " + this.courseNameCtrl.value)
-		console.log("Submitted!")
+		var department: string = this.departmentCtrl.value;
+		var isWritingIntensive: boolean = this.isWritingIntensive;
+		var courseDesignation: string = this.courseDesignation;
+		var courseName: string = this.courseNameCtrl.value;
+
+		console.log("Department: " + department)
+		console.log("Writing Intensive: " + isWritingIntensive)
+		console.log("Course Designation: " + courseDesignation)
+		console.log("Course Name: " + courseName)
+
+		this.dataSource.search(department, courseName, isWritingIntensive, courseDesignation)
+
 		return null
 	}
-}
-
-const courseResults: Course[] = [{
-	departmentId: 100,
-	courseId: 200,
-	writingIntensive: true,
-	designation: 'H',
-	name: 'courseName',
-	quality: 5.00,
-	medianGrade: 90,
-	distributionArray: [100, 80, 90],
-	instructorName: 'instructorName',
-	semester: SemesterEnum['F17']
-}];
-
-export class MyDataSource extends DataSource<any> {
-  /** Connect function called by the table to retrieve one stream containing the data to render. */
-  connect(): Observable<Course[]> {
-    return Observable.of(courseResults);
-  }
-
-  disconnect() {}
 }
