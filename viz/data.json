@@ -1,0 +1,12 @@
+{
+  "departmentID": 600,
+  "courseID": 226,
+  "courseName": "Data Structures",
+  "courseQuality": 3.86,
+  "medianGrade": "B",
+  "distribution": [
+    "A+", "B", "B", "C", "B+", "D+", "C+", "A-", "D", "B-", "C", "C+", "B+",
+    "B-", "C", "C-", "C+", "D+", "B-", "B", "A+", "C-", "C+", "D", "D", "F", "A",
+    "C", "D", "A", "B", "B+", "B-", "D", "C", "C-", "A+", "A", "C", "B-", "B+"
+  ]
+}
