@@ -8,6 +8,9 @@ import { MdAutocompleteModule } from '@angular/material';
 import { MdInputModule } from '@angular/material';
 import { MdCheckboxModule } from '@angular/material';
 import { MdSelectModule } from '@angular/material';
+import { MdCardModule } from '@angular/material';
+import { MdButtonModule } from '@angular/material';
+import { MdTableModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 
@@ -23,6 +26,9 @@ import { AppComponent } from './app.component';
     MdInputModule,
     MdCheckboxModule,
     MdSelectModule,
+    MdCardModule,
+    MdButtonModule,
+    MdTableModule,
     FormsModule,
     ReactiveFormsModule
   ],
