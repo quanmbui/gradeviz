@@ -36,7 +36,20 @@ var line = d3.line()
     .x(function(d, i) { return xTrend(i); })
     .y(function(d, i) { return yTrend(d); });
 
-// create tooltip 
+// create tooltips
+var tipBar = d3.tip()
+    .attr("class", "tip")
+    .offset([-10, 0])
+    .html(function(d) {
+      return "<strong>Frequency:</strong> <span style='color:white'>" + d[1] + "</span>";
+    })
+
+var tipTrend = d3.tip()
+    .attr("class", "tip")
+    .offset([-10, 0])
+    .html(function(d) {
+      return "<strong>Rating:</strong> <span style='color:white'>" + d + "</span>";
+    })
 
 // create barChart
 d3.select("body")
@@ -46,6 +59,8 @@ d3.select("body")
     .append("g")
     .attr("id", "barChart")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.select("#barChart").call(tipBar);
 
 // create donutChart
 d3.select("body")
@@ -67,6 +82,8 @@ d3.select("body")
     .append("g")
     .attr("id", "trendChart")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.select("#trendChart").call(tipTrend);
 
 d3.select("#barChart").append("g")
     .attr("class", "axis axis--x")
@@ -103,6 +120,7 @@ d3.select("#gradeStats").append("text")
     .attr("y", 90)
     .attr("id", "letterGrade")
     .text("No Grade")
+
 //////////////////////////////
 /// DATA LOADING FUNCTIONS ///
 //////////////////////////////
@@ -205,6 +223,8 @@ function updateBarChart(data) {
       .attr("width", xBar.bandwidth())
       .attr("height", 0)
       .attr("fill", "steelblue")
+      .on("mouseover", tipBar.show)
+      .on("mouseout", tipBar.hide)
       .transition().duration(500)
       .attr("y", function(d) { return yBar(d[1]); })
       .attr("height", function(d) { return height - yBar(d[1]); });
@@ -214,7 +234,6 @@ function updateBarChart(data) {
       .attr("y", height)
       .attr("height", 0)
       .remove();
-
 }
 
 // update donutChart
@@ -260,23 +279,10 @@ function updateDonutChart(gpaData) {
 // update trendChart
 function updateTrendChart(ratingsData) {
   xTrend.domain([0, 6]);
-  var trendChartPoints = d3.select("#trendChart").selectAll(".point")
-      .data(ratingsData)
   var trendChartPath = d3.select("#trendChart").selectAll(".path")
       .data([ratingsData])
-
-  trendChartPoints.transition()
-      .duration(500)
-      .attr("cx", function(d, i) { return xTrend(i); })
-      .attr("cy", function(d, i) { return yTrend(d); });
-
-  trendChartPoints.enter()
-      .append("circle")
-      .attr("class", "point")
-      .attr("cx", function(d, i) { return xTrend(i); })
-      .attr("cy", function(d, i) { return yTrend(d); })
-      .attr("r", 3.5)
-      .attr("fill", "steelblue");
+  var trendChartPoints = d3.select("#trendChart").selectAll(".point")
+      .data(ratingsData)
 
   trendChartPath.transition()
       .duration(500)
@@ -290,8 +296,23 @@ function updateTrendChart(ratingsData) {
       .attr("stroke-width", 1.5)
       .attr("d", line);
 
-  trendChartPoints.exit().remove();
+  trendChartPoints.transition()
+      .duration(500)
+      .attr("cx", function(d, i) { return xTrend(i); })
+      .attr("cy", function(d, i) { return yTrend(d); });
+
+  trendChartPoints.enter()
+      .append("circle")
+      .attr("class", "point")
+      .attr("cx", function(d, i) { return xTrend(i); })
+      .attr("cy", function(d, i) { return yTrend(d); })
+      .attr("r", 3.5)
+      .attr("fill", "steelblue")
+      .on("mouseover", tipTrend.show)
+      .on("mouseout", tipTrend.hide);
+
   trendChartPath.exit().remove();
+  trendChartPoints.exit().remove();
 }
 
 // update gradeDisplay
