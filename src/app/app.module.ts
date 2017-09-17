@@ -21,6 +21,9 @@ import { AppComponent } from './app.component';
 import { LandingComponent } from '../components/landing';
 import { DashboardComponent } from '../components/dashboard';
 
+import { D3Service } from 'd3-ng2-service'; // <-- import statement
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,7 +57,7 @@ import { DashboardComponent } from '../components/dashboard';
       pathMatch: 'full'
     }])
   ],
-  providers: [],
+  providers: [D3Service],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
