@@ -6,10 +6,9 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
 
 import { Course } from '../util/courseModel';
-import { SemesterEnum } from '../util/semesterEnum';
 import { CourseDataSource } from '../services/courses';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
-import { departments, Department } from '../util/departments'
+import { departments, Department, instanceOfDepartment } from '../util/departments'
 
 @Component({
 	selector: 'app-root',
@@ -26,6 +25,8 @@ export class AppComponent {
 	displayedColumns: string[] = ['id', 'name', 'instructorName', 'quality', 'medianGrade'];
   	courseDataSource: CourseDataSource;
 
+  	db: AngularFireDatabase;
+
 	courses: any[] = [{
 		name: 'Arkansas',
 		number: '2.978M'
@@ -41,14 +42,16 @@ export class AppComponent {
 	}];
 
 	constructor(db: AngularFireDatabase) {
-		this.courseDataSource = new CourseDataSource(db);
+		this.courseDataSource = new CourseDataSource(db, 'S16');
+		this.db = db;
 
 		this.departmentCtrl = new FormControl();
 		this.courseNameCtrl = new FormControl();
 
 		this.filteredDepartments = this.departmentCtrl.valueChanges
 		.startWith(null)
-		.map(department => department ? this.filterDepartments(department) : []);
+        .map(department => department && instanceOfDepartment(department) ? department.name : department)
+        .map(name => name ? this.filterDepartments(name) : []);
 
 		this.filteredCourses = this.courseNameCtrl.valueChanges
 		.startWith(null)
@@ -61,7 +64,7 @@ export class AppComponent {
 	}
 
 	displayDepartments(department: Department): string {
-		return department ? department.name : department.number;
+		return department ? department.name : '';
 	}
 
 	filterCourses(name: string): any[] {
@@ -70,10 +73,11 @@ export class AppComponent {
 	}
 
 	search() {
-		var department: Department = this.departmentCtrl.value.number;
+		var department: Department = this.departmentCtrl.value;
 		var courseName: string = this.courseNameCtrl.value;
+		var semester: string = 'S14';
 
-		this.courseDataSource.search(department, courseName)
+		this.courseDataSource = new CourseDataSource(this.db, semester, department)
 
 		return null
 	}

@@ -3,6 +3,10 @@ export interface Department {
 	number: string;
 }
 
+export function instanceOfDepartment(object: any): object is Department {
+	return (<Department>object).name !== undefined;
+}
+
 export var departments: Department[] = [{
 	name: 'Africana Studies',
 	number: '362'

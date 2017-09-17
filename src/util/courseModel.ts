@@ -1,5 +1,3 @@
-import { SemesterEnum } from './semesterEnum'
-
 export interface Course {
   departmentId: number;
   courseId: number;
@@ -10,5 +8,5 @@ export interface Course {
   medianGrade: number;
   distributionArray: number[];
   instructorName: string;
-  semester: SemesterEnum;
+  semester: string;
 }
