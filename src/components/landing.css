@@ -60,5 +60,17 @@ img.landingpageBG {
 }
 
 .mat-form-field {
-  width: 100%;
+    width: 100%;
+}
+
+.topcorner{
+  position:absolute;
+  float: right;
+  width: 10%;
+  right: 10%;
+  margin-top: 1%;
+}
+
+input[type="file"] {
+	display: none;
 }

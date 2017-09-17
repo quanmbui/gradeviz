@@ -16,7 +16,8 @@ var xBar = d3.scaleBand().rangeRound([0, width]).padding(0.2),
 // needed for axes labels
 var gradesList = ["A+", "A", "A-", "B+", "B", "B-",
                   "C+", "C", "C-", "D+", "D", "F"];
-var semestersList = ["SP13", "FA13", "SP14", "FA14", "SP15", "FA15", "SP16"]
+var semestersList = ["S11", "F11", "S12", "F12", "S13", "F13",
+                      "S14", "F14", "S15", "F15", "S16"];
 
 // create arc and pie generators for donutChart
 var radius = Math.min(width/2, height/2) / 2;
@@ -39,7 +40,7 @@ var tipBar = d3.tip()
     .offset([-10, 0])
     .html(function(d, i) {
       return "<span style='color:white'>" + Math.round(d[1] * 100) +
-      "% got a(n) " + gradesList[i] + "! </span>";
+      "% people got a(n) " + gradesList[i] + "! </span>";
     })
 
 var tipTrend = d3.tip()
@@ -110,13 +111,18 @@ d3.select("#barChart").append("text")
   .attr("x", 20 - (height / 2))
   .attr("dy", "1em")
   .style("text-anchor", "middle")
-  .text("Percent");
+  .text("Count");
 
 d3.select("#donutChart").append("text")
     //.attr("y", 6)
     .attr("dy", ".91em")
     .attr("text-anchor", "middle")
     .text("GPA");
+
+d3.select("#donutChart").append("text")
+    .attr("text-anchor", "middle")
+    .attr("id", "donutChartText")
+    .text("0.00");
 
 d3.select("#trendChart").append("g")
     .attr("class", "axis axis--x")
@@ -143,6 +149,7 @@ d3.select("#trendChart").append("text")
   .attr("dy", "1em")
   .style("text-anchor", "middle")
   .text("Average Rating");
+
 
 d3.select("#gradeStats").append("text")
     .attr("x", 200)
@@ -171,9 +178,20 @@ function getFrequency(distribution) {
                   frequencies["B+"], frequencies["B"], frequencies["B-"],
                   frequencies["C+"], frequencies["C"], frequencies["C-"],
                   frequencies["D+"], frequencies["D"], frequencies["F"]];
+
+    for (var i = 0; i < frequencies.length; i++) {
+        if (frequencies[i] === undefined) {
+            frequencies[i] = 0;
+        }
+    }
+
     frequencies = frequencies.map(function(x) { return x/distribution.length; })
-    console.log(frequencies);
+
     return frequencies;
+}
+// returns total number of letter grades available
+function getNumGrades(distribution) {
+  return distribution.length;
 }
 
 // returns GPA for class
@@ -213,20 +231,38 @@ function getGPA(distribution) {
 ////////////////////////
 
 // draw all charts with updated data
-function update() {
-  d3.json("data.json", function(error, data) {
-      var ratingsData = [3.71, 4.15, 3.52, 3.8, 4.01, 4.20, 3.9];
+function update1() {
+  d3.json("data1.json", function(error, data) {
+      var ratingsData = [4.11, 4.01, 4.21, 3.86, 3.71, 4.15, 3.52, 3.8, 4.01, 4.20, 3.86];
 
+      var numGrades = getNumGrades(data["distribution"]);
       var gpa = getGPA(data["distribution"]);
       var gpaData = [gpa, 4.0 - gpa];
 
       updateBarChart(data);
       updateDonutChart(gpaData);
       updateTrendChart(ratingsData);
-      updateGradeDisplay(data["medianGrade"]);
+      updateTextDisplay(gpa, data["medianGrade"]);
 
   })
 }
+
+function update2() {
+  d3.json("data2.json", function(error, data) {
+      var ratingsData = [2.55, 2.91, 3.5, 3.2, 2.71, 2.21, 2.89, 3.1, 2.32, 2.91, 3.00];
+
+      var numGrades = getNumGrades(data["distribution"]);
+      var gpa = getGPA(data["distribution"]);
+      var gpaData = [gpa, 4.0 - gpa];
+
+      updateBarChart(data);
+      updateDonutChart(gpaData);
+      updateTrendChart(ratingsData);
+      updateTextDisplay(gpa, data["medianGrade"]);
+
+  })
+}
+
 
 // update barChart
 function updateBarChart(data) {
@@ -241,8 +277,6 @@ function updateBarChart(data) {
   var barChart = d3.select("#barChart")
       .selectAll(".bar")
       .data(Object.entries(freq))
-      .attr("y", height) // might not want
-      .attr("height", 0) // this to happen?
 
   barChart.transition()
       .duration(500)
@@ -299,20 +333,13 @@ function updateDonutChart(gpaData) {
                     return arc(d);
           }});
 
-  donutChart.enter()
-      .append("text")
-      .attr("class", "donut")
-      .attr("text-anchor", "middle")
-      .attr("class", "donutChartText")
-      .text(Math.round(gpaData[0] * 100) / 100);
-
   donutChart.exit().remove();
 
 }
 
 // update trendChart
 function updateTrendChart(ratingsData) {
-  xTrend.domain([0, 6]);
+  xTrend.domain([0, 10]);
 
   d3.select("#trendChart").select(".axis--x").call(d3.axisBottom(xTrend)
       .tickFormat(function(i) { return semestersList[i]; } ));
@@ -354,12 +381,7 @@ function updateTrendChart(ratingsData) {
 }
 
 // update gradeDisplay
-function updateGradeDisplay(grade) {
+function updateTextDisplay(gpa, grade) {
   d3.select("#letterGrade").text(grade)
-}
-
-// not functional yet lol
-function clear() {
-  data = [];
-  updateBarChart(data);
+  d3.select("#donutChartText").text(gpa.toFixed(2))
 }
