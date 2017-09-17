@@ -49,52 +49,32 @@
   </md-card-actions>
 </md-card>
 
-<div class="example-container mat-elevation-z8">
-  <md-table #table [dataSource]="dataSource">
+<div class="example-container mat-elevation-z8" *ngIf="courseDataSource.hasData">
+  <md-table #table [dataSource]="courseDataSource">
 
-    <!--- Note that these columns can be defined in any order.
-          The actual rendered columns are set as a property on the row definition" -->
-
-    <!-- Position Column -->
     <ng-container mdColumnDef="id">
       <md-header-cell *mdHeaderCellDef> Coures ID </md-header-cell>
-      <md-cell *mdCellDef="let course"> {{course.departmentId}}.{{course.courseId}} </md-cell>
+      <md-cell *mdCellDef="let course"> {{course.DeptID}}.{{course.CourseID}} </md-cell>
     </ng-container>
 
-    <!-- Name Column -->
     <ng-container mdColumnDef="name">
       <md-header-cell *mdHeaderCellDef> Name </md-header-cell>
-      <md-cell *mdCellDef="let course"> {{course.name}} </md-cell>
+      <md-cell *mdCellDef="let course"> {{course.Name}} </md-cell>
     </ng-container>
 
-    <!-- Weight Column -->
     <ng-container mdColumnDef="instructorName">
       <md-header-cell *mdHeaderCellDef> Instructor </md-header-cell>
-      <md-cell *mdCellDef="let course"> {{course.instructorName}} </md-cell>
+      <md-cell *mdCellDef="let course"> {{course.Instructor}} </md-cell>
     </ng-container>
 
-    <!-- Color Column -->
     <ng-container mdColumnDef="quality">
       <md-header-cell *mdHeaderCellDef> Quality </md-header-cell>
-      <md-cell *mdCellDef="let course"> {{course.quality}} </md-cell>
+      <md-cell *mdCellDef="let course"> {{course.Quality}} </md-cell>
     </ng-container>
 
-    <!-- Color Column -->
     <ng-container mdColumnDef="medianGrade">
       <md-header-cell *mdHeaderCellDef> Average Grade </md-header-cell>
-      <md-cell *mdCellDef="let course"> {{course.medianGrade}} </md-cell>
-    </ng-container>
-
-    <!-- Color Column -->
-    <ng-container mdColumnDef="writingIntensive">
-      <md-header-cell *mdHeaderCellDef> Writing Intensive </md-header-cell>
-      <md-cell *mdCellDef="let course"> {{course.writingIntensive}} </md-cell>
-    </ng-container>
-
-    <!-- Color Column -->
-    <ng-container mdColumnDef="designation">
-      <md-header-cell *mdHeaderCellDef> Course Designation </md-header-cell>
-      <md-cell *mdCellDef="let course"> {{course.designation}} </md-cell>
+      <md-cell *mdCellDef="let course"> {{course.Grade}} </md-cell>
     </ng-container>
 
     <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
