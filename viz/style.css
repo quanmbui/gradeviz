@@ -1,0 +1,21 @@
+body {
+    font: 24px Arial;
+}
+
+.tip {
+  font: 10px Arial;
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+
+.bar:hover {
+  fill: orangered;
+}
+
+.point:hover {
+  fill: orangered;
+}
