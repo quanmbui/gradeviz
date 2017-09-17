@@ -13,13 +13,10 @@ var xBar = d3.scaleBand().rangeRound([0, width]).padding(0.2),
     xTrend = d3.scaleLinear().rangeRound([0, width])
     yTrend = d3.scaleLinear().rangeRound([height/2, 0]).domain([0, 5]);
 
-// possible letter grade options
+// needed for axes labels
 var gradesList = ["A+", "A", "A-", "B+", "B", "B-",
                   "C+", "C", "C-", "D+", "D", "F"];
-// create axes
-var xAxis = d3.axisBottom(xBar)
-              .tickFormat(function(d, i) { return gradesList[i] }),
-    yAxis = d3.axisLeft(yBar);
+var semestersList = ["SP13", "FA13", "SP14", "FA14", "SP15", "FA15", "SP16"]
 
 // create arc and pie generators for donutChart
 var radius = Math.min(width/2, height/2) / 2;
@@ -40,15 +37,17 @@ var line = d3.line()
 var tipBar = d3.tip()
     .attr("class", "tip")
     .offset([-10, 0])
-    .html(function(d) {
-      return "<strong>Frequency:</strong> <span style='color:white'>" + d[1] + "</span>";
+    .html(function(d, i) {
+      return "<span style='color:white'>" + Math.round(d[1] * 100) +
+      "% got a(n) " + gradesList[i] + "! </span>";
     })
 
 var tipTrend = d3.tip()
     .attr("class", "tip")
     .offset([-10, 0])
-    .html(function(d) {
-      return "<strong>Rating:</strong> <span style='color:white'>" + d + "</span>";
+    .html(function(d, i) {
+      return "<strong>Semester:</strong> <span style='color:white'>" + semestersList[i] +
+      "</span> <br/> <strong>Avg Rating:</strong> <span style='color:white'>" + d + "</span>";
     })
 
 // create barChart
@@ -60,6 +59,7 @@ d3.select("body")
     .attr("id", "barChart")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+// tipBar will function on #barChart
 d3.select("#barChart").call(tipBar);
 
 // create donutChart
@@ -83,6 +83,7 @@ d3.select("body")
     .attr("id", "trendChart")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+// tipTrend will function on #trendChart
 d3.select("#trendChart").call(tipTrend);
 
 d3.select("#barChart").append("g")
@@ -92,13 +93,24 @@ d3.select("#barChart").append("g")
 
 d3.select("#barChart").append("g")
     .attr("class", "axis axis--y")
-    .call(d3.axisLeft(yBar).ticks(10))
-    .append("text")
-    .attr("transform", "rotate(-90)")
-    .attr("y", 6)
-    .attr("dy", "0.71em")
-    .attr("text-anchor", "end")
-    .text("Frequency");
+    .call(d3.axisLeft(yBar));
+
+// Text label for the x axis (barChart)
+d3.select("#barChart").append("text")
+  .attr("class", "axis label")
+  .attr("transform", "translate(" + width/2 + " ," + 450 + ")")
+  .style("text-anchor", "middle")
+  .text("Letter Grades");
+
+// Text label for the y axis (barChart)
+d3.select("#barChart").append("text")
+  .attr("class", "axis label")
+  .attr("transform", "rotate(-90)")
+  .attr("y", 10 - margin.left)
+  .attr("x", 20 - (height / 2))
+  .attr("dy", "1em")
+  .style("text-anchor", "middle")
+  .text("Percent");
 
 d3.select("#donutChart").append("text")
     //.attr("y", 6)
@@ -115,15 +127,32 @@ d3.select("#trendChart").append("g")
     .attr("class", "axis axis--y")
     .call(d3.axisLeft(yTrend));
 
+// Text label for the x axis
+d3.select("#trendChart").append("text")
+  .attr("class", "axis label")
+  .attr("transform", "translate(" + width/2 + " ," + 250 + ")")
+  .style("text-anchor", "middle")
+  .text("Semesters");
+
+// Text label for the y axis
+d3.select("#trendChart").append("text")
+  .attr("class", "axis label")
+  .attr("transform", "rotate(-90)")
+  .attr("y", -60)
+  .attr("x", -100)
+  .attr("dy", "1em")
+  .style("text-anchor", "middle")
+  .text("Average Rating");
+
 d3.select("#gradeStats").append("text")
     .attr("x", 200)
     .attr("y", 90)
     .attr("id", "letterGrade")
     .text("No Grade")
 
-//////////////////////////////
-/// DATA LOADING FUNCTIONS ///
-//////////////////////////////
+/////////////////////////////
+/// DATA HELPER FUNCTIONS ///
+/////////////////////////////
 
 // returns JS object of frequencies of each letter grade
 function getFrequency(distribution) {
@@ -142,7 +171,8 @@ function getFrequency(distribution) {
                   frequencies["B+"], frequencies["B"], frequencies["B-"],
                   frequencies["C+"], frequencies["C"], frequencies["C-"],
                   frequencies["D+"], frequencies["D"], frequencies["F"]];
-
+    frequencies = frequencies.map(function(x) { return x/distribution.length; })
+    console.log(frequencies);
     return frequencies;
 }
 
@@ -203,6 +233,10 @@ function updateBarChart(data) {
   var freq = getFrequency(data["distribution"]);
   xBar.domain(Object.keys(freq));
   yBar.domain([0, d3.max(Object.values(freq), function(d) { return d})]);
+
+  d3.select("#barChart").select(".axis--x").call(d3.axisBottom(xBar)
+      .tickFormat(function(i) { return gradesList[i] }));
+  d3.select("#barChart").select(".axis--y").call(d3.axisLeft(yBar));
 
   var barChart = d3.select("#barChart")
       .selectAll(".bar")
@@ -279,6 +313,10 @@ function updateDonutChart(gpaData) {
 // update trendChart
 function updateTrendChart(ratingsData) {
   xTrend.domain([0, 6]);
+
+  d3.select("#trendChart").select(".axis--x").call(d3.axisBottom(xTrend)
+      .tickFormat(function(i) { return semestersList[i]; } ));
+
   var trendChartPath = d3.select("#trendChart").selectAll(".path")
       .data([ratingsData])
   var trendChartPoints = d3.select("#trendChart").selectAll(".point")
@@ -320,6 +358,7 @@ function updateGradeDisplay(grade) {
   d3.select("#letterGrade").text(grade)
 }
 
+// not functional yet lol
 function clear() {
   data = [];
   updateBarChart(data);

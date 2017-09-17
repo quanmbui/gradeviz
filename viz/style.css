@@ -1,5 +1,5 @@
 body {
-    font: 24px Arial;
+  font: 24px Arial;
 }
 
 .tip {
@@ -18,4 +18,8 @@ body {
 
 .point:hover {
   fill: orangered;
+}
+
+.label {
+  font: 12px Arial;
 }
