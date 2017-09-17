@@ -9,7 +9,7 @@ import { Course } from '../util/courseModel';
 import { SemesterEnum } from '../util/semesterEnum';
 import { CourseDataSource } from '../services/courses';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
-import { departments } from '../util/departments'
+import { departments, Department } from '../util/departments'
 
 @Component({
 	selector: 'app-root',
@@ -56,8 +56,12 @@ export class AppComponent {
 	}
 
 	filterDepartments(name: string): any[] {
-		return departments.filter((department) => {
+		return departments.filter((department: Department) => {
 			return (department.name + department.number).toLowerCase().search(name.toLowerCase()) !== -1});
+	}
+
+	displayDepartments(department: Department): string {
+		return department ? department.name : department.number;
 	}
 
 	filterCourses(name: string): any[] {
@@ -66,7 +70,7 @@ export class AppComponent {
 	}
 
 	search() {
-		var department: string = this.departmentCtrl.value;
+		var department: Department = this.departmentCtrl.value.number;
 		var courseName: string = this.courseNameCtrl.value;
 
 		this.courseDataSource.search(department, courseName)

@@ -1,4 +1,9 @@
-export var departments: any[] = [{
+export interface Department {
+	name: string;
+	number: string;
+}
+
+export var departments: Department[] = [{
 	name: 'Africana Studies',
 	number: '362'
 }, {

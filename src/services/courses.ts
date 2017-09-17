@@ -7,6 +7,7 @@ import 'rxjs/add/observable/of';
 
 import { Course } from '../util/courseModel';
 import { SemesterEnum } from '../util/semesterEnum';
+import { Department } from '../util/departments'
 
 export class CourseDataSource extends DataSource<any> {
   courseResults: FirebaseListObservable<Course[]>;
@@ -22,10 +23,10 @@ export class CourseDataSource extends DataSource<any> {
 
     this.orderByChild = 'department'
 
-    this.courseResults = db.list('/evals/' + (this.semesterSubject ? this.semesterSubject : ''), {
+    this.courseResults = db.list('/evals/-KuCNE-hpCTy1rIjQ0lE/' + (this.semesterSubject ? this.semesterSubject : 'F14') + '/', {
       query: {
-        orderByChild: 'Department',
-        equalTo: this.nameSubject
+        orderByChild: 'DeptID',
+        equalTo: this.departmentSubject
       }
     });
 
@@ -40,7 +41,7 @@ export class CourseDataSource extends DataSource<any> {
     return this.courseResults;
   }
 
-  public search(department?: string, courseName?: string, semester?: SemesterEnum): void {
+  public search(department?: Department, courseName?: string, semester?: SemesterEnum): void {
     semester = semester ? semester : SemesterEnum[SemesterEnum[12]]
     console.log("getting data for semester " + SemesterEnum[semester]);
 
@@ -56,12 +57,14 @@ export class CourseDataSource extends DataSource<any> {
   public disconnect() {}
 
   private searchByName(courseName: string, semester: SemesterEnum): void {
+    console.log("searching by course name with name = " + courseName);
     this.semesterSubject.next(semester);
     this.nameSubject.next(courseName);
   }
 
-  private searchByDepartment(deparment: string, semester: SemesterEnum): void {
+  private searchByDepartment(deparment: Department, semester: SemesterEnum): void {
+    console.log("searching by department with department = " + deparment);
     this.semesterSubject.next(semester);
-    this.departmentSubject.next(deparment);
+    this.departmentSubject.next(deparment.number);
   }
 }
