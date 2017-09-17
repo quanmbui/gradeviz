@@ -41,8 +41,8 @@ export class CourseDataSource extends DataSource<any> {
   }
 
   public search(department?: string, courseName?: string, semester?: SemesterEnum): void {
-    console.log("getting data for semester " + SemesterEnum[semester]);
     semester = semester ? semester : SemesterEnum[SemesterEnum[12]]
+    console.log("getting data for semester " + SemesterEnum[semester]);
 
     if(department) {
       this.searchByDepartment(department, semester)
