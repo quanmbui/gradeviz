@@ -25,7 +25,7 @@ export class CourseDataSource extends DataSource<any> {
     this.courseResults = db.list('/Evals/-KuCNE-hpCTy1rIjQ0lE/' + semester, {
       query: {
         orderByChild: 'DeptID',
-        equalTo: department ? department.number : '660'
+        equalTo: department ? department.number : ''
       }
     });
   }

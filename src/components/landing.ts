@@ -9,7 +9,7 @@ import 'rxjs/add/operator/map';
 import { Course } from '../util/courseModel';
 import { CourseDataSource, updateCourseGrade } from '../services/courses';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
-import { departments, Department, instanceOfDepartment } from '../util/departments'
+import { departments, Department, instanceOfDepartment } from '../util/departments';
 import PDFJS from 'pdfjs-dist';
 
 @Component({
@@ -25,9 +25,13 @@ export class LandingComponent{
 	filteredCourses: Observable<any[]>;
 
 	displayedColumns: string[] = ['id', 'name', 'instructorName', 'quality', 'medianGrade'];
-  	courseDataSource: CourseDataSource;
+	courseDataSource: CourseDataSource;
+	hasCourses: boolean;
 
-  	static db: AngularFireDatabase;
+	semesters: any[];
+	selectedSemester: any;
+
+	static db: AngularFireDatabase;
 
 	courses: any[] = [{
 		name: 'Arkansas',
@@ -46,17 +50,48 @@ export class LandingComponent{
 	constructor(
 		private db: AngularFireDatabase,
 		private router: Router
-  ) {
+		) {
 		this.courseDataSource = new CourseDataSource(db, 'S16');
 		LandingComponent.db = db;
 
 		this.departmentCtrl = new FormControl();
 		this.courseNameCtrl = new FormControl();
 
+		this.semesters = [{
+			name: "Fall 2011",
+			abv: "F11"
+		}, {
+			name: "Spring 2012",
+			abv: "S12"
+		}, { 
+			name: "Fall 2012",
+			abv: "F12"
+		}, { 
+			name:"Spring 2013", 
+			abv: "S13" 
+		}, {
+			name: "Fall 2013", 
+			abv: "F13"
+		}, { 
+			name: "Spring 2014", 
+			abv: "S14"
+		}, {
+			name:"Fall 2014", 
+			abv: "F14"
+		}, {
+			name: "Fall 2015",
+			abv: "F15"
+		}, {
+			name:"Spring 2016",
+			abv: "S16"
+		}];
+
+		this.selectedSemester = this.semesters[this.semesters.length - 1];
+
 		this.filteredDepartments = this.departmentCtrl.valueChanges
 		.startWith(null)
-        .map(department => department && instanceOfDepartment(department) ? department.name : department)
-        .map(name => name ? this.filterDepartments(name) : []);
+		.map(department => department && instanceOfDepartment(department) ? department.name : department)
+		.map(name => name ? this.filterDepartments(name) : []);
 
 		this.filteredCourses = this.courseNameCtrl.valueChanges
 		.startWith(null)
@@ -80,10 +115,18 @@ export class LandingComponent{
 	search() {
 		var department: Department = this.departmentCtrl.value;
 		var courseName: string = this.courseNameCtrl.value;
-		var semester: string = 'S14';
+		var semester: string = this.selectedSemester.abv;
+
+		console.log(semester);
 
 		if (department) {
-			this.courseDataSource = new CourseDataSource(LandingComponent.db, semester, department)
+			this.courseDataSource = new CourseDataSource(LandingComponent.db, semester, department);
+			this.courseDataSource.connect().subscribe(resp => {
+				if (resp.length > 0) {
+					this.hasCourses = true;
+					this.scrollToCourses();
+				}
+			});
 		} else {
 			this.router.navigate(['/dashboard', courseName]);
 		}
@@ -92,16 +135,16 @@ export class LandingComponent{
 	}
 
 	transcriptPDFHandler(event) {
-	    let fileInput = event.target.files[0],
-			reader = new FileReader();
+		let fileInput = event.target.files[0],
+		reader = new FileReader();
 
-	    var semesters = {"Fall 2011": "F11", "Spring 2012": "S12", "Fall 2012": "F12", "Spring 2013": "S13",
-	                     "Fall 2013": "F13", "Spring 2014": "S14", "Fall 2014": "F14", "Spring 2015": "S15",
-	                     "Fall 2015": "F15", "Spring 2016": "S16"};
+		var semesters = {"Fall 2011": "F11", "Spring 2012": "S12", "Fall 2012": "F12", "Spring 2013": "S13",
+		"Fall 2013": "F13", "Spring 2014": "S14", "Fall 2014": "F14", "Spring 2015": "S15",
+		"Fall 2015": "F15", "Spring 2016": "S16"};
 
 
 		var gradesList = ["A+", "A", "A-", "B+", "B", "B-",
-		                  "C+", "C", "C-", "D+", "D", "F"];
+		"C+", "C", "C-", "D+", "D", "F"];
 
 
 		var courseList = [];
@@ -151,5 +194,13 @@ export class LandingComponent{
 		});
 
 		reader.readAsArrayBuffer(fileInput);
+	}
+
+	public scrollToCourses() {
+		var element = document.getElementById('courses-table');
+
+		if(element) {
+			element.scrollIntoView({behavior: "smooth"});
+		}
 	}
 }

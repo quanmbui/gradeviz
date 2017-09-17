@@ -1,8 +1,8 @@
-.example-container {
+.table-container {
   display: flex;
   flex-direction: column;
-  max-height: 500px;
   min-width: 300px;
+  margin-top: 5%;
 }
 
 .mat-table {
@@ -51,12 +51,14 @@ img.landingpageBG {
 }
 
 .search-button {
-  width: 10%;
-  margin-top: 5%;
-  margin-left: 45%;
-  margin-right: 45%;
+  padding-top: 4.5%;
+  text-align: center;
+  margin: auto;
+  color: white;
+  font-size: 18px;
+  font-family: Roboto;
 }
 
 .mat-form-field {
-    width: 100%;
+  width: 100%;
 }
