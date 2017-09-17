@@ -1,84 +1,87 @@
-<md-toolbar color="primary">
-  <span>GradeViz</span>
-</md-toolbar>
+<img src="../assets/landingpageBG.jpg" class="landingpageBG">
 
-<div class="title">
-  Search Smarter, Not Harder.
-</div>
+<div class="pageBody">
 
-<div class="subtitle">
-  Class searching made simple.
-</div>
+  <h1 class="title">
+    GradeViz
+  </h1>
 
-<md-card>
-  <md-card-header>
-    <md-card-title>Try it out</md-card-title>
-    <md-card-subtitle>subtext here</md-card-subtitle>
-  </md-card-header>
-  <md-card-content>
-    <form>
-      <md-form-field>
-        <input mdInput placeholder="Department" aria-label="Department" [mdAutocomplete]="departmentAuto" [formControl]="departmentCtrl">
-        <md-autocomplete #departmentAuto="mdAutocomplete">
-          <md-option *ngFor="let department of filteredDepartments | async" [value]="department.name">
-            <span>{{ department.name }}</span> |
-            <span>{{ department.number }}</span>
-          </md-option>
-        </md-autocomplete>
-      </md-form-field>
-      <section>
-        <md-checkbox [(ngModel)]="isWritingIntensive" name="isWritingIntensive">Writing Intensive</md-checkbox>
-      </section>
-      <md-select placeholder="Course Designation" [(ngModel)]="courseDesignation" name="courseDesignation">
-        <md-option *ngFor="let designation of courseDesignations" [value]="designation">
-          {{designation}}
-        </md-option>
-      </md-select>
-      <md-form-field>
-        <input mdInput placeholder="Course Name" aria-label="Course Name" [mdAutocomplete]="courseNameAuto" [formControl]="courseNameCtrl">
-        <md-autocomplete #courseNameAuto="mdAutocomplete">
-          <md-option *ngFor="let course of filteredCourses | async" [value]="course.name">
-            <span>{{ course.name }}</span>
-          </md-option>
-        </md-autocomplete>
-      </md-form-field>
-    </form>
-  </md-card-content>
-  <md-card-actions>
-    <button md-button (click)="search()">SEARCH</button>
-  </md-card-actions>
-</md-card>
+  <h3 class="subtitle">
+    Search Smarter, Not Harder
+  </h3>
 
-<div class="example-container mat-elevation-z8" *ngIf="courseDataSource.hasData">
-  <md-table #table [dataSource]="courseDataSource">
+    <md-card class="search-card-department">
+      <md-card-header>
+        <md-card-title>Search by Department</md-card-title>
+      </md-card-header>
+      <md-card-content>
+        <form>
+          <md-form-field>
+            <input mdInput placeholder="Department" aria-label="Department" [mdAutocomplete]="departmentAuto" [formControl]="departmentCtrl">
+            <md-autocomplete #departmentAuto="mdAutocomplete">
+              <md-option *ngFor="let department of filteredDepartments | async" [value]="department.name">
+                <span>{{department.name}}</span> | 
+                <span>{{department.number}}</span>
+              </md-option>
+            </md-autocomplete>
+          </md-form-field>
+        </form>
+      </md-card-content>
+    </md-card>
 
-    <ng-container mdColumnDef="id">
-      <md-header-cell *mdHeaderCellDef> Coures ID </md-header-cell>
-      <md-cell *mdCellDef="let course"> {{course.DeptID}}.{{course.CourseID}} </md-cell>
-    </ng-container>
+    <md-card class="search-card-course-name">
+      <md-card-header>
+        <md-card-title>Search by Class Name</md-card-title>
+      </md-card-header>
+      <md-card-content>
+        <form>
+          <md-form-field>
+            <input mdInput placeholder="Course Name" aria-label="Course Name" [mdAutocomplete]="courseNameAuto" [formControl]="courseNameCtrl">
+            <md-autocomplete #courseNameAuto="mdAutocomplete">
+              <md-option *ngFor="let course of filteredCourses | async" [value]="course.name">
+                <span>{{course.name}}</span>
+              </md-option>
+            </md-autocomplete>
+          </md-form-field>
+        </form>
+      </md-card-content>
+    </md-card>
 
-    <ng-container mdColumnDef="name">
-      <md-header-cell *mdHeaderCellDef> Name </md-header-cell>
-      <md-cell *mdCellDef="let course"> {{course.Name}} </md-cell>
-    </ng-container>
+  <button md-raised-button color="primary" (click)="search()" class="search-button">
+    Search
+  </button>
 
-    <ng-container mdColumnDef="instructorName">
-      <md-header-cell *mdHeaderCellDef> Instructor </md-header-cell>
-      <md-cell *mdCellDef="let course"> {{course.Instructor}} </md-cell>
-    </ng-container>
+  <div class="example-container mat-elevation-z8" *ngIf="courseDataSource.hasData">
+    <md-table #table [dataSource]="courseDataSource">
 
-    <ng-container mdColumnDef="quality">
-      <md-header-cell *mdHeaderCellDef> Quality </md-header-cell>
-      <md-cell *mdCellDef="let course"> {{course.Quality}} </md-cell>
-    </ng-container>
+      <ng-container mdColumnDef="id">
+        <md-header-cell *mdHeaderCellDef> Coures ID </md-header-cell>
+        <md-cell *mdCellDef="let course"> {{course.DeptID}}.{{course.CourseID}} </md-cell>
+      </ng-container>
 
-    <ng-container mdColumnDef="medianGrade">
-      <md-header-cell *mdHeaderCellDef> Average Grade </md-header-cell>
-      <md-cell *mdCellDef="let course"> {{course.Grade}} </md-cell>
-    </ng-container>
+      <ng-container mdColumnDef="name">
+        <md-header-cell *mdHeaderCellDef> Name </md-header-cell>
+        <md-cell *mdCellDef="let course"> {{course.Name}} </md-cell>
+      </ng-container>
 
-    <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
-    <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
-  </md-table>
+      <ng-container mdColumnDef="instructorName">
+        <md-header-cell *mdHeaderCellDef> Instructor </md-header-cell>
+        <md-cell *mdCellDef="let course"> {{course.Instructor}} </md-cell>
+      </ng-container>
+
+      <ng-container mdColumnDef="quality">
+        <md-header-cell *mdHeaderCellDef> Quality </md-header-cell>
+        <md-cell *mdCellDef="let course"> {{course.Quality}} </md-cell>
+      </ng-container>
+
+      <ng-container mdColumnDef="medianGrade">
+        <md-header-cell *mdHeaderCellDef> Average Grade </md-header-cell>
+        <md-cell *mdCellDef="let course"> {{course.Grade}} </md-cell>
+      </ng-container>
+
+      <md-header-row *mdHeaderRowDef="displayedColumns"></md-header-row>
+      <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
+    </md-table>
+  </div>
 </div>
 
