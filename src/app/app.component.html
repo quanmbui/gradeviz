@@ -20,7 +20,7 @@
             <input mdInput placeholder="Department" aria-label="Department" [mdAutocomplete]="departmentAuto" [formControl]="departmentCtrl">
             <md-autocomplete #departmentAuto="mdAutocomplete" [displayWith]="displayDepartments">
               <md-option *ngFor="let department of filteredDepartments | async" [value]="department">
-                <span>{{department.name}}</span> | 
+                <span>{{department.name}}</span> |
                 <span>{{department.number}}</span>
               </md-option>
             </md-autocomplete>
@@ -83,5 +83,5 @@
       <md-row *mdRowDef="let row; columns: displayedColumns;"></md-row>
     </md-table>
   </div>
+  <input type='file' accept='pdf' (change)="transcriptPDFHandler($event)">
 </div>
-

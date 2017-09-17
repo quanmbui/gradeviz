@@ -36,3 +36,14 @@ export class CourseDataSource extends DataSource<any> {
 
   public disconnect() {}
 }
+
+export function updateCourseGrade(db: AngularFireDatabase, semester, courseID, letterGrade) {
+    var course = db.object('/Evals/-KuCNE-hpCTy1rIjQ0lE/' + semester + '/' + courseID);
+    var courseDistributionArray = db.list('/Evals/-KuCNE-hpCTy1rIjQ0lE/' + semester + '/' + courseID + '/distributionArray');
+    if ( courseDistributionArray != undefined ) {
+        courseDistributionArray.push(letterGrade);
+    } else {
+        // var distributionArray = [letterGrade];
+        course.update({"distributionArray": [letterGrade]});
+    }
+}
