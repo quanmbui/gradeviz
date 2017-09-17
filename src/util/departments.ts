@@ -1,4 +1,13 @@
-export var departments: any[] = [{
+export interface Department {
+	name: string;
+	number: string;
+}
+
+export function instanceOfDepartment(object: any): object is Department {
+	return (<Department>object).name !== undefined;
+}
+
+export var departments: Department[] = [{
 	name: 'Africana Studies',
 	number: '362'
 }, {

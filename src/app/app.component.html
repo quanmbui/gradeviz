@@ -18,8 +18,8 @@
         <form>
           <md-form-field>
             <input mdInput placeholder="Department" aria-label="Department" [mdAutocomplete]="departmentAuto" [formControl]="departmentCtrl">
-            <md-autocomplete #departmentAuto="mdAutocomplete">
-              <md-option *ngFor="let department of filteredDepartments | async" [value]="department.name">
+            <md-autocomplete #departmentAuto="mdAutocomplete" [displayWith]="displayDepartments">
+              <md-option *ngFor="let department of filteredDepartments | async" [value]="department">
                 <span>{{department.name}}</span> | 
                 <span>{{department.number}}</span>
               </md-option>
@@ -51,11 +51,11 @@
     Search
   </button>
 
-  <div class="example-container mat-elevation-z8" *ngIf="courseDataSource.hasData">
+  <div class="example-container mat-elevation-z8">
     <md-table #table [dataSource]="courseDataSource">
 
       <ng-container mdColumnDef="id">
-        <md-header-cell *mdHeaderCellDef> Coures ID </md-header-cell>
+        <md-header-cell *mdHeaderCellDef> Course ID </md-header-cell>
         <md-cell *mdCellDef="let course"> {{course.DeptID}}.{{course.CourseID}} </md-cell>
       </ng-container>
 

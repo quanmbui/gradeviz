@@ -6,62 +6,33 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/of';
 
 import { Course } from '../util/courseModel';
-import { SemesterEnum } from '../util/semesterEnum';
+import { Department } from '../util/departments'
 
 export class CourseDataSource extends DataSource<any> {
   courseResults: FirebaseListObservable<Course[]>;
 
   departmentSubject: Subject<string>;
   nameSubject: Subject<string>;
-  semesterSubject: Subject<SemesterEnum>;
+  semesterSubject: Subject<string>;
 
   orderByChild: string;
 
-  constructor(db: AngularFireDatabase) {
+  constructor(db: AngularFireDatabase, semester: string, department?: Department) {
     super();
 
-    this.orderByChild = 'department'
+    console.log('created a new data source! ' + semester + " " + (department ? department.number : 'no dept'))
 
-    this.courseResults = db.list('/evals/' + (this.semesterSubject ? this.semesterSubject : ''), {
+    this.courseResults = db.list('/Evals/-KuCNE-hpCTy1rIjQ0lE/' + semester, {
       query: {
-        orderByChild: 'Department',
-        equalTo: this.nameSubject
+        orderByChild: 'DeptID',
+        equalTo: department ? department.number : '660'
       }
     });
-
-    this.departmentSubject = new Subject();
-    this.nameSubject = new Subject();
-    this.semesterSubject = new Subject();
-
-    this.courseResults.subscribe(list => list.map(item => console.log(item)));
   }
 
   public connect(): Observable<Course[]> {
     return this.courseResults;
   }
 
-  public search(department?: string, courseName?: string, semester?: SemesterEnum): void {
-    semester = semester ? semester : SemesterEnum[SemesterEnum[12]]
-    console.log("getting data for semester " + SemesterEnum[semester]);
-
-    if(department) {
-      this.searchByDepartment(department, semester)
-    } else if (courseName) {
-      this.searchByName(courseName, semester)
-    } else {
-      console.log("ERROR SEARCHING")
-    }
-  }
-
   public disconnect() {}
-
-  private searchByName(courseName: string, semester: SemesterEnum): void {
-    this.semesterSubject.next(semester);
-    this.nameSubject.next(courseName);
-  }
-
-  private searchByDepartment(deparment: string, semester: SemesterEnum): void {
-    this.semesterSubject.next(semester);
-    this.departmentSubject.next(deparment);
-  }
 }
