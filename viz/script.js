@@ -36,6 +36,8 @@ var line = d3.line()
     .x(function(d, i) { return xTrend(i); })
     .y(function(d, i) { return yTrend(d); });
 
+// create tooltip 
+
 // create barChart
 d3.select("body")
     .append("svg")
@@ -48,7 +50,8 @@ d3.select("body")
 // create donutChart
 d3.select("body")
     .append("svg")
-    .attr("width", width/4 + margin.left + margin.right)
+    .attr("id", "gradeStats")
+    .attr("width", width/2 + margin.left + margin.right)
     .attr("height", height/4 + margin.top + margin.bottom)
     .attr("transform", "translate(0," + (height/2) + ")")
     .append("g")
@@ -95,6 +98,11 @@ d3.select("#trendChart").append("g")
     .attr("class", "axis axis--y")
     .call(d3.axisLeft(yTrend));
 
+d3.select("#gradeStats").append("text")
+    .attr("x", 200)
+    .attr("y", 90)
+    .attr("id", "letterGrade")
+    .text("No Grade")
 //////////////////////////////
 /// DATA LOADING FUNCTIONS ///
 //////////////////////////////
@@ -167,6 +175,7 @@ function update() {
       updateBarChart(data);
       updateDonutChart(gpaData);
       updateTrendChart(ratingsData);
+      updateGradeDisplay(data["medianGrade"]);
 
   })
 }
@@ -197,13 +206,13 @@ function updateBarChart(data) {
       .attr("height", 0)
       .attr("fill", "steelblue")
       .transition().duration(500)
-          .attr("y", function(d) { return yBar(d[1]); })
-          .attr("height", function(d) { return height - yBar(d[1]); });
+      .attr("y", function(d) { return yBar(d[1]); })
+      .attr("height", function(d) { return height - yBar(d[1]); });
 
   barChart.exit()
       .transition().duration(500)
-          .attr("y", height)
-          .attr("height", 0)
+      .attr("y", height)
+      .attr("height", 0)
       .remove();
 
 }
@@ -250,13 +259,16 @@ function updateDonutChart(gpaData) {
 
 // update trendChart
 function updateTrendChart(ratingsData) {
-  xTrend.domain([0, ratingsData.length]);
-  var trendChart = d3.select("#trendChart")
-
-  var trendChartPoints = trendChart.selectAll(".point")
+  xTrend.domain([0, 6]);
+  var trendChartPoints = d3.select("#trendChart").selectAll(".point")
       .data(ratingsData)
+  var trendChartPath = d3.select("#trendChart").selectAll(".path")
+      .data([ratingsData])
 
-  //var trendChartPath = trendChart.selectAll(".path")
+  trendChartPoints.transition()
+      .duration(500)
+      .attr("cx", function(d, i) { return xTrend(i); })
+      .attr("cy", function(d, i) { return yTrend(d); });
 
   trendChartPoints.enter()
       .append("circle")
@@ -266,14 +278,25 @@ function updateTrendChart(ratingsData) {
       .attr("r", 3.5)
       .attr("fill", "steelblue");
 
-  trendChart.enter()
+  trendChartPath.transition()
+      .duration(500)
+      .attr("d", line);
+
+  trendChartPath.enter()
       .append("path")
-      .datum(ratingsData)
       .attr("class", "path")
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
       .attr("d", line);
+
+  trendChartPoints.exit().remove();
+  trendChartPath.exit().remove();
+}
+
+// update gradeDisplay
+function updateGradeDisplay(grade) {
+  d3.select("#letterGrade").text(grade)
 }
 
 function clear() {
